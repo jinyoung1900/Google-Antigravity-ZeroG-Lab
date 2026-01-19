@@ -33,7 +33,7 @@ Chronos Tracker is a sophisticated, glassmorphic productivity suite designed for
 ## 🎨 Showcase
 
 <div align="center">
-  <img src="docs/showcase/demo.webp" alt="Main Tracker Demo" width="100%" />
+  <img src="docs/showcase/new-demo.webp" alt="Main Tracker Demo" width="100%" />
   <br />
   <div style="display: flex; gap: 10px; justify-content: center;">
     <img src="docs/showcase/goals.png" alt="Goals Tab" width="48%" />
@@ -43,6 +43,12 @@ Chronos Tracker is a sophisticated, glassmorphic productivity suite designed for
   <img src="docs/showcase/mobile.png" alt="Mobile Experience" width="300px" />
   <p><i>The secret mascot easter egg is hidden somewhere in the title! 🐶✨</i></p>
 </div>
+
+---
+
+## 📥 Download APK
+Want to try it on your Android device?
+[**Download Chronos Tracker (Debug APK)**](release/chronos-tracker-debug.apk)
 
 ---
 
