@@ -192,6 +192,13 @@ function App() {
     return `${h > 0 ? h + 'h ' : ''}${m}m ${s}s`;
   };
 
+  const formatCompactDuration = (minutes: number) => {
+    if (minutes < 60) return `${minutes}m`;
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}h ${m}m`;
+  };
+
   const getRunningDuration = (startTime: number) => {
     return Math.floor((currentTime - startTime) / 1000);
   };
@@ -630,7 +637,7 @@ function App() {
                       <span style={{ fontWeight: '600' }}>{activity.name}</span>
                     </div>
                     <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ color: 'var(--accent-blue)', fontWeight: '700' }}>{actualMin}m</span>
+                      <span style={{ color: 'var(--accent-blue)', fontWeight: '700' }}>{formatCompactDuration(actualMin)}</span>
                       <span style={{ color: 'var(--text-dim)', fontSize: '0.875rem' }}>/</span>
                       <input
                         type="number"
@@ -649,7 +656,7 @@ function App() {
                           fontWeight: '700'
                         }}
                       />
-                      <span style={{ color: 'var(--text-dim)', fontSize: '0.875rem' }}>goal</span>
+                      <span style={{ color: 'var(--text-dim)', fontSize: '0.8125rem' }}>{targetMin >= 60 ? `(${formatCompactDuration(targetMin)})` : 'min'}</span>
                     </div>
                   </div>
                   <div style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
@@ -686,7 +693,7 @@ function App() {
                   return (
                     <div key={activity.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>{activity.emoji} {activity.name}</div>
-                      <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>{Math.floor(todaySec / 60)}m</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '700' }}>{formatCompactDuration(Math.floor(todaySec / 60))}</div>
                       <div style={{ fontSize: '0.75rem', color: diff >= 0 ? '#34d399' : '#fb7185', marginTop: '0.25rem' }}>
                         {diff >= 0 ? '+' : ''}{Math.round(diff)}% vs average
                       </div>
