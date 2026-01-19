@@ -1,73 +1,90 @@
-# React + TypeScript + Vite
+# <img src="docs/showcase/app_icon.png" width="48" height="48" align="center" /> Chronos Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Precision time tracking for peak performance.**
 
-Currently, two official plugins are available:
+Chronos Tracker is a sophisticated, glassmorphic productivity suite designed for deep work and multi-dimensional analysis. Built as a high-performance Progressive Web App (PWA), it offers a seamless experience across desktop and mobile.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ✨ Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🚀 Advanced Tracking
+- **Multi-Timer Support**: Track multiple activities simultaneously without losing a second.
+- **Pomodoro Focus Mode**: Integrated work/break cycles (25m/5m) with automatic tracking pauses.
+- **Precision Logging**: Real-time timer synchronization and detailed history management.
 
-## Expanding the ESLint configuration
+### 🎯 Goal Management
+- **Daily Target Setting**: Set custom minute-based goals for every activity.
+- **Visual Progress**: Real-time progress bars in the **GOALS** tab showing "Actual vs Target" performance.
+- **Time Refinement**: Automatically formats long durations into readable `h m` segments (e.g., 1h 30m).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 📈 Insights & Analytics
+- **Efficiency Trends**: Compare today's focus against your historical daily averages.
+- **Weekly Heatmap**: A visual intensity grid showing your productivity levels over the last 7 days.
+- **Export Power**: One-click **CSV Export** for professional data analysis in Excel or Google Sheets.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 📱 Premium PWA & Native Ready
+- **Installable**: One-tap installation on iOS and Android for a native-like experience.
+- **Offline First**: All data is saved on-device using local storage—track your time anywhere.
+- **Native Bridge**: Pre-configured with **Capacitor**, ready to be built for the Apple App Store and Google Play Store.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🎨 Showcase
+
+<div align="center">
+  <img src="docs/showcase/demo.webp" alt="Main Tracker Demo" width="100%" />
+  <br />
+  <div style="display: flex; gap: 10px; justify-content: center;">
+    <img src="docs/showcase/goals.png" alt="Goals Tab" width="48%" />
+    <img src="docs/showcase/heatmap.png" alt="Insights Heatmap" width="48%" />
+  </div>
+  <br />
+  <img src="docs/showcase/mobile.png" alt="Mobile Experience" width="300px" />
+  <p><i>The secret mascot easter egg is hidden somewhere in the title! 🐶✨</i></p>
+</div>
+
+---
+
+## 🛠️ Tech Stack
+
+- **Core**: React + Vite + TypeScript
+- **Styling**: Vanilla CSS (Electric Blue Glassmorphism)
+- **Icons**: Lucide React
+- **Analytics**: Recharts
+- **PWA**: Vite PWA Plugin
+- **Native**: Capacitor JS
+
+---
+
+## 🚀 Getting Started
+
+### Local Development
+1. Clone the repo
+2. Run `npm install`
+3. Start the dev server: `npm run dev`
+
+### Installation (PWA)
+1. Open the app URL on your phone's browser.
+2. Tap **'Share'** (iOS) or the **Menu (⋮)** (Android).
+3. Select **'Add to Home Screen'**.
+
+### Mobile Stores (Native)
+The project includes `android/` and `ios/` folders. 
+- **Android**: Open the `android` folder in Android Studio.
+- **iOS**: Open the `ios` folder in Xcode (macOS only).
+
+---
+
+## 📦 Production Build
+To generate the production-ready static files:
+```bash
+npm run build
 ```
+The output will be in the `dist` folder, ready for deployment to Vercel, Netlify, or any web host.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+<div align="center">
+  <p>Built with ❤️ for precision and productivity.</p>
+</div>

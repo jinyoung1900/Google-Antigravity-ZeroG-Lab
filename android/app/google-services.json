@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1064378249444",
+    "project_id": "device-streaming-e6d6cb94",
+    "storage_bucket": "device-streaming-e6d6cb94.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064378249444:android:1e76a4646983edc3ee3cf1",
+        "android_client_info": {
+          "package_name": "com.chronos.tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRhMnzH-28xyUHZNUqL6i3Lj7RLosq6Xo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

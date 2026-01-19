@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Square, Settings2, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Edit2 } from 'lucide-react'
+import { Square, Settings2, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Edit2, Clock, Target, BarChart2 } from 'lucide-react'
 import { PRESET_ACTIVITIES } from './types'
 import type { TimeLog, Activity } from './types'
 import './App.css'
+import { translations } from './translations'
 
 import AnalyticsChart from './components/AnalyticsChart'
 import ExportPanel from './components/ExportPanel'
@@ -34,6 +35,7 @@ function App() {
   // New Activity Form State
   const [newActivityName, setNewActivityName] = useState('');
   const [newActivityEmoji, setNewActivityEmoji] = useState('✨');
+  const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
 
   // Pomodoro State
   const [pomodoroMode, setPomodoroMode] = useState(false);
@@ -43,6 +45,12 @@ function App() {
   // Easter Egg State
   const [, setTitleClickCount] = useState(0);
   const [showEasterEgg, setShowEasterEgg] = useState(false);
+
+  // Language State
+  const [language, setLanguage] = useState<'en' | 'ko'>(() => {
+    const saved = localStorage.getItem('chronos_lang');
+    return (saved as 'en' | 'ko') || 'ko'; // Default to Korean as requested
+  });
 
   // --- Persistence ---
   useEffect(() => {
@@ -56,6 +64,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('chronos_goals', JSON.stringify(goals));
   }, [goals]);
+
+  useEffect(() => {
+    localStorage.setItem('chronos_lang', language);
+  }, [language]);
 
   // --- Timer Tick ---
   useEffect(() => {
@@ -90,6 +102,12 @@ function App() {
   }, [logs, pomodoroMode, pomodoroState]);
 
   // --- Logic ---
+  const t = (key: string) => translations[language][key] || key;
+
+  const getLocalizedActivityName = (activity: Activity) => {
+    const key = `activity_${activity.name}`;
+    return translations[language][key] || activity.name;
+  };
   const activeLogs = useMemo(() => logs.filter(l => !l.endTime), [logs]);
 
   const dailyLogs = useMemo(() =>
@@ -148,6 +166,13 @@ function App() {
     ));
   };
 
+  const updateActivityName = (id: string, newName: string) => {
+    setActivities(prev => prev.map(a =>
+      a.id === id ? { ...a, name: newName } : a
+    ));
+    setEditingActivityId(null);
+  };
+
   const deleteActivity = (id: string) => {
     // Don't delete if it's currently being tracked
     if (activeLogs.some(l => l.activityId === id)) {
@@ -189,14 +214,19 @@ function App() {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
-    return `${h > 0 ? h + 'h ' : ''}${m}m ${s}s`;
+    const hStr = language === 'ko' ? '시간 ' : 'h ';
+    const mStr = language === 'ko' ? '분 ' : 'm ';
+    const sStr = language === 'ko' ? '초' : 's';
+    return `${h > 0 ? h + hStr : ''}${m}${mStr}${s}${sStr}`;
   };
 
   const formatCompactDuration = (minutes: number) => {
-    if (minutes < 60) return `${minutes}m`;
+    if (minutes < 60) return `${minutes}${language === 'ko' ? '분' : 'm'}`;
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
-    return `${h}h ${m}m`;
+    const hStr = language === 'ko' ? '시간 ' : 'h ';
+    const mStr = language === 'ko' ? '분' : 'm';
+    return `${h}${hStr}${m > 0 ? m + mStr : ''}`;
   };
 
   const getRunningDuration = (startTime: number) => {
@@ -287,84 +317,60 @@ function App() {
           </div>
         </div>
       )}
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', padding: '0.5rem 0' }}>
         <div>
           <h1
             onClick={handleTitleClick}
             style={{
-              fontSize: '2.5rem',
+              fontSize: '1.75rem',
               color: 'var(--accent-blue)',
               letterSpacing: '-0.02em',
               cursor: 'pointer',
-              userSelect: 'none'
+              userSelect: 'none',
+              lineHeight: '1.2'
             }}
           >
             CHRONOS
           </h1>
-          <p style={{ color: 'var(--text-dim)' }}>Precision time tracking for peak performance.</p>
+          <p style={{ color: 'var(--text-dim)', fontSize: '0.75rem' }}>{t('header_tagline')}</p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button className="glass-card" style={{ padding: '0.75rem' }} onClick={() => setShowSettings(!showSettings)}>
-            <Settings2 size={20} color={showSettings ? 'var(--accent-blue)' : 'white'} />
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button
+            className="glass-card"
+            style={{ padding: '0.6rem', background: showSettings ? 'var(--accent-blue-dim)' : 'var(--bg-card)', borderColor: showSettings ? 'var(--accent-blue)' : 'var(--border-color)' }}
+            onClick={() => setShowSettings(!showSettings)}
+          >
+            <Settings2 size={18} color={showSettings ? 'var(--accent-blue)' : 'white'} />
           </button>
         </div>
       </header>
 
-      {/* Tab Navigation */}
-      <nav style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
-        <button
+      {/* Global Active Session Banner (New Compact Design) */}
+      {activeLogs.length > 0 && activeTab !== 'tracker' && (
+        <div
           onClick={() => setActiveTab('tracker')}
           style={{
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            color: activeTab === 'tracker' ? 'var(--accent-blue)' : 'var(--text-dim)',
-            padding: '0.5rem 0.75rem',
-            position: 'relative'
+            background: 'var(--accent-blue-dim)',
+            border: '1px solid var(--accent-blue)',
+            borderRadius: '12px',
+            padding: '0.5rem 1rem',
+            marginBottom: '1.5rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            cursor: 'pointer'
           }}
         >
-          TRACKER
-          {activeTab === 'tracker' && <div style={{ position: 'absolute', bottom: '-1rem', left: 0, right: 0, height: '2px', background: 'var(--accent-blue)', boxShadow: '0 0 10px var(--accent-blue)' }} />}
-        </button>
-        <button
-          onClick={() => setActiveTab('goals')}
-          style={{
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            color: activeTab === 'goals' ? 'var(--accent-blue)' : 'var(--text-dim)',
-            padding: '0.5rem 0.75rem',
-            position: 'relative'
-          }}
-        >
-          GOALS
-          {activeTab === 'goals' && <div style={{ position: 'absolute', bottom: '-1rem', left: 0, right: 0, height: '2px', background: 'var(--accent-blue)', boxShadow: '0 0 10px var(--accent-blue)' }} />}
-        </button>
-        <button
-          onClick={() => setActiveTab('stats')}
-          style={{
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            color: activeTab === 'stats' ? 'var(--accent-blue)' : 'var(--text-dim)',
-            padding: '0.5rem 0.75rem',
-            position: 'relative'
-          }}
-        >
-          HISTORY
-          {activeTab === 'stats' && <div style={{ position: 'absolute', bottom: '-1rem', left: 0, right: 0, height: '2px', background: 'var(--accent-blue)', boxShadow: '0 0 10px var(--accent-blue)' }} />}
-        </button>
-        <button
-          onClick={() => setActiveTab('insights')}
-          style={{
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            color: activeTab === 'insights' ? 'var(--accent-blue)' : 'var(--text-dim)',
-            padding: '0.5rem 0.75rem',
-            position: 'relative'
-          }}
-        >
-          INSIGHTS
-          {activeTab === 'insights' && <div style={{ position: 'absolute', bottom: '-1rem', left: 0, right: 0, height: '2px', background: 'var(--accent-blue)', boxShadow: '0 0 10px var(--accent-blue)' }} />}
-        </button>
-      </nav>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="pulse" style={{ width: '8px', height: '8px', background: 'var(--accent-blue)', borderRadius: '50%' }} />
+            <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--accent-blue)' }}>{t('session_active')}</span>
+          </div>
+          <span style={{ fontSize: '0.9rem', fontWeight: '700', fontFamily: 'monospace', color: 'var(--accent-blue)' }}>
+            {formatDuration(getRunningDuration(activeLogs[0].startTime))}
+          </span>
+        </div>
+      )}
+
 
       {/* Global Active Sessions (Visible on all tabs if running) */}
       {activeLogs.length > 0 && (
@@ -374,9 +380,9 @@ function App() {
             return (
               <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <span style={{ fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent-blue)' }}>Running Session</span>
+                  <span style={{ fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent-blue)' }}>{t('running_session')}</span>
                   <h2 style={{ fontSize: '1.5rem', marginTop: '0.5rem' }}>
-                    {activity?.emoji} {activity?.name}
+                    {activity?.emoji} {getLocalizedActivityName(activity!)}
                   </h2>
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -384,7 +390,7 @@ function App() {
                     {formatDuration(getRunningDuration(log.startTime))}
                   </div>
                   <button className="electric-button" style={{ background: '#ff4d4d', boxShadow: '0 4px 20px rgba(255, 77, 77, 0.3)', marginTop: '0.5rem', padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => stopTimer(log.activityId)}>
-                    <Square size={14} fill="currentColor" /> STOP
+                    <Square size={14} fill="currentColor" /> {t('stop')}
                   </button>
                 </div>
               </div>
@@ -397,12 +403,12 @@ function App() {
         <main>
           {/* Activity List - Compact Grid */}
           <section>
-            <h3 style={{ marginBottom: '1.5rem', opacity: 0.8 }}>Start Tracking</h3>
+            <h3 style={{ marginBottom: '1.5rem', opacity: 0.8 }}>{t('start_tracking')}</h3>
 
             {/* Pomodoro Controls */}
             <div className="glass-card" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderColor: pomodoroMode ? 'var(--accent-blue)' : 'var(--border-color)' }}>
               <div>
-                <div style={{ fontWeight: '600', fontSize: '1rem', color: pomodoroMode ? 'var(--accent-blue)' : 'white' }}>🍅 Pomodoro</div>
+                <div style={{ fontWeight: '600', fontSize: '1rem', color: pomodoroMode ? 'var(--accent-blue)' : 'white' }}>🍅 {t('pomodoro')}</div>
               </div>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 {pomodoroMode && (
@@ -429,7 +435,7 @@ function App() {
                     fontSize: '0.75rem'
                   }}
                 >
-                  {pomodoroMode ? 'DISABLE' : 'ENABLE'}
+                  {pomodoroMode ? t('disable') : t('enable')}
                 </button>
               </div>
             </div>
@@ -480,7 +486,7 @@ function App() {
                     width: '100%',
                     display: 'block'
                   }}>
-                    {activity.name}
+                    {getLocalizedActivityName(activity)}
                   </span>
                 </button>
               ))}
@@ -504,7 +510,7 @@ function App() {
                     {selectedDate}
                   </div>
                   {recordedDates.has(selectedDate) && (
-                    <span style={{ fontSize: '0.6rem', color: 'var(--accent-blue)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>● Recorded</span>
+                    <span style={{ fontSize: '0.6rem', color: 'var(--accent-blue)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>● {t('recorded')}</span>
                   )}
                 </div>
                 <button onClick={() => {
@@ -541,7 +547,7 @@ function App() {
           <main>
             {/* Daily Logs List */}
             <div className="glass-card">
-              <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem' }}>Detailed Logs</h3>
+              <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem' }}>{t('detailed_logs')}</h3>
               {dailyLogs.length === 0 ? (
                 <p style={{ color: 'var(--text-dim)', fontSize: '1rem', textAlign: 'center', padding: '2rem' }}>No logs recorded for this day yet.</p>
               ) : (
@@ -606,7 +612,7 @@ function App() {
                         borderRadius: '12px'
                       }}
                     >
-                      {logsExpanded ? 'SHOW LESS' : `SHOW ALL (${dailyLogs.length})`}
+                      {logsExpanded ? t('show_less') : `${t('show_all')} (${dailyLogs.length})`}
                     </button>
                   )}
                 </div>
@@ -619,7 +625,7 @@ function App() {
       ) : activeTab === 'goals' ? (
         <main>
           <div className="glass-card">
-            <h2 style={{ marginBottom: '2rem', color: 'var(--accent-blue)' }}>Daily Goals</h2>
+            <h2 style={{ marginBottom: '2rem', color: 'var(--accent-blue)' }}>{t('daily_goals')}</h2>
             {activities.filter(a => a.enabled).map(activity => {
               const targetMin = goals[activity.id] || 0;
               const actualSec = logs
@@ -739,8 +745,8 @@ function App() {
       ) : (
         <main>
           <div className="glass-card">
-            <h2 style={{ marginBottom: '2rem', color: 'var(--accent-blue)' }}>Insights</h2>
-            <p style={{ color: 'var(--text-dim)' }}>Select a tab to view your performance data.</p>
+            <h2 style={{ marginBottom: '2rem', color: 'var(--accent-blue)' }}>{t('nav_insights')}</h2>
+            <p style={{ color: 'var(--text-dim)' }}>{language === 'ko' ? '분석 결과를 확인하려면 탭을 선택하세요.' : 'Select a tab to view your performance data.'}</p>
           </div>
         </main>
       )}
@@ -749,35 +755,93 @@ function App() {
       <div className={`drawer-overlay ${showSettings ? 'active' : ''}`} onClick={() => setShowSettings(false)} />
       <div className={`drawer ${showSettings ? 'active' : ''}`}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem', alignItems: 'center' }}>
-          <h2 style={{ fontSize: '1.5rem', color: 'var(--accent-blue)' }}>Settings</h2>
+          <h2 style={{ fontSize: '1.5rem', color: 'var(--accent-blue)' }}>{t('settings')}</h2>
           <button onClick={() => setShowSettings(false)} style={{ color: 'var(--text-dim)', fontSize: '1.5rem' }}>×</button>
         </div>
 
         <section style={{ marginBottom: '2.5rem' }}>
-          <h4 style={{ marginBottom: '1.25rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>Activity Visibility</h4>
+          <h4 style={{ marginBottom: '1.25rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>{t('language')}</h4>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button
+              onClick={() => setLanguage('ko')}
+              className="glass-card"
+              style={{ flex: 1, padding: '0.75rem', borderColor: language === 'ko' ? 'var(--accent-blue)' : 'var(--border-color)', color: language === 'ko' ? 'var(--accent-blue)' : 'white' }}
+            >
+              한국어
+            </button>
+            <button
+              onClick={() => setLanguage('en')}
+              className="glass-card"
+              style={{ flex: 1, padding: '0.75rem', borderColor: language === 'en' ? 'var(--accent-blue)' : 'var(--border-color)', color: language === 'en' ? 'var(--accent-blue)' : 'white' }}
+            >
+              English
+            </button>
+          </div>
+        </section>
+
+        <section style={{ marginBottom: '2.5rem' }}>
+          <h4 style={{ marginBottom: '1.25rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>{t('activity_visibility')}</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {activities.map(a => (
               <div key={a.id} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <button
-                  onClick={() => toggleActivity(a.id)}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem 1rem',
-                    borderRadius: '12px',
-                    border: `1px solid ${a.enabled ? 'var(--accent-blue)' : 'var(--border-color)'}`,
-                    color: a.enabled ? 'var(--accent-blue)' : 'var(--text-dim)',
-                    background: a.enabled ? 'var(--accent-blue-dim)' : 'transparent',
-                    fontSize: '0.9rem',
-                    textAlign: 'left',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem'
-                  }}
-                >
-                  <span style={{ fontSize: '1.25rem' }}>{a.emoji}</span>
-                  <span style={{ flex: 1 }}>{a.name}</span>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: a.enabled ? 'var(--accent-blue)' : 'transparent', border: '1px solid var(--border-color)' }} />
-                </button>
+                {editingActivityId !== a.id && (
+                  <button
+                    onClick={() => toggleActivity(a.id)}
+                    style={{
+                      flex: 1,
+                      padding: '0.75rem 1rem',
+                      borderRadius: '12px',
+                      border: `1px solid ${a.enabled ? 'var(--accent-blue)' : 'var(--border-color)'}`,
+                      color: a.enabled ? 'var(--accent-blue)' : 'var(--text-dim)',
+                      background: a.enabled ? 'var(--accent-blue-dim)' : 'transparent',
+                      fontSize: '0.9rem',
+                      textAlign: 'left',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem'
+                    }}
+                  >
+                    <span style={{ fontSize: '1.25rem' }}>{a.emoji}</span>
+                    <span style={{ flex: 1 }}>{getLocalizedActivityName(a)}</span>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: a.enabled ? 'var(--accent-blue)' : 'transparent', border: '1px solid var(--border-color)' }} />
+                  </button>
+                )}
+                {editingActivityId === a.id ? (
+                  <div style={{ display: 'flex', gap: '0.5rem', flex: 1 }}>
+                    <input
+                      type="text"
+                      defaultValue={a.name}
+                      autoFocus
+                      onBlur={(e) => updateActivityName(a.id, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') updateActivityName(a.id, (e.target as any).value);
+                      }}
+                      style={{
+                        flex: 1,
+                        background: 'var(--bg-dark)',
+                        border: '1px solid var(--accent-blue)',
+                        color: 'white',
+                        padding: '0.5rem',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem'
+                      }}
+                    />
+                    <button onClick={() => setEditingActivityId(null)} style={{ color: '#ff4d4d' }}>×</button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setEditingActivityId(a.id)}
+                    style={{
+                      padding: '0.75rem',
+                      color: 'var(--text-dim)',
+                      opacity: 0.8,
+                      fontSize: '1rem'
+                    }}
+                  >
+                    <Edit2 size={16} />
+                  </button>
+                )}
+
                 <button
                   onClick={() => deleteActivity(a.id)}
                   style={{
@@ -796,11 +860,11 @@ function App() {
         </section>
 
         <section style={{ borderTop: '1px solid var(--border-color)', paddingTop: '2rem', marginBottom: '2.5rem' }}>
-          <h4 style={{ marginBottom: '1.25rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>Daily Goals (Minutes)</h4>
+          <h4 style={{ marginBottom: '1.25rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>{t('daily_goals_min')}</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {activities.filter(a => a.enabled).map(a => (
               <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.9rem' }}>{a.emoji} {a.name}</span>
+                <span style={{ fontSize: '0.9rem' }}>{a.emoji} {getLocalizedActivityName(a)}</span>
                 <input
                   type="number"
                   value={goals[a.id] || ''}
@@ -814,7 +878,7 @@ function App() {
         </section>
 
         <section style={{ borderTop: '1px solid var(--border-color)', paddingTop: '2rem' }}>
-          <h4 style={{ marginBottom: '1.25rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>Create Custom Activity</h4>
+          <h4 style={{ marginBottom: '1.25rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)' }}>{t('create_custom')}</h4>
           <form onSubmit={addCustomActivity} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <input
@@ -832,15 +896,44 @@ function App() {
                 style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', color: 'white', padding: '0.75rem', borderRadius: '12px' }}
               />
             </div>
-            <button type="submit" className="electric-button" style={{ width: '100%', justifyContent: 'center' }}>ADD NEW ACTIVITY</button>
+            <button type="submit" className="electric-button" style={{ width: '100%', justifyContent: 'center' }}>{t('add_activity')}</button>
           </form>
         </section>
 
-        <section style={{ marginTop: 'auto', paddingTop: '2rem', borderTop: '1px solid var(--border-color)' }}>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', textAlign: 'center' }}>Chronos v1.2.0 • Data is saved locally</p>
-        </section>
-      </div>
-    </div>
+      </div >
+
+      {/* Modern Bottom Navigation */}
+      < nav className="bottom-nav" >
+        <button
+          className={`nav-item ${activeTab === 'tracker' ? 'active' : ''}`}
+          onClick={() => setActiveTab('tracker')}
+        >
+          <Clock size={24} />
+          <span>{t('nav_tracker')}</span>
+        </button>
+        <button
+          className={`nav-item ${activeTab === 'goals' ? 'active' : ''}`}
+          onClick={() => setActiveTab('goals')}
+        >
+          <Target size={24} />
+          <span>{t('nav_goals')}</span>
+        </button>
+        <button
+          className={`nav-item ${activeTab === 'stats' ? 'active' : ''}`}
+          onClick={() => setActiveTab('stats')}
+        >
+          <CalendarIcon size={24} />
+          <span>{t('nav_history')}</span>
+        </button>
+        <button
+          className={`nav-item ${activeTab === 'insights' ? 'active' : ''}`}
+          onClick={() => setActiveTab('insights')}
+        >
+          <BarChart2 size={24} />
+          <span>{t('nav_insights')}</span>
+        </button>
+      </nav >
+    </div >
   )
 }
 
