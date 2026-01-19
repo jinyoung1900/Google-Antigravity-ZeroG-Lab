@@ -1,0 +1,27 @@
+# Chronos Tracker - Master Task List
+
+- [x] Environment & Dev Setup
+- [x] Design System (Electric Blue Glassmorphism)
+- [x] Tabbed Navigation (Tracker vs Stats)
+- [x] Custom Activity Support
+- [x] UI Refinement (Compact Grid/Icons)
+- [x] Side Drawer for Settings
+- [x] CSV Data Export
+- [x] Advanced Power Features
+    - [x] Multi-timer support (Track multiple things)
+    - [x] Daily Goals Tab (Target vs Actual)
+    - [x] Insights Tab (Trends & Heatmap)
+    - [x] Pomodoro Timer Mode (Deep Work focus)
+    - [x] Inline goal editing in GOALS tab
+    - [x] Collapsible history logs
+    - [x] Mascot Easter Egg 🐶
+- [x] Final Polish
+    - [x] PWA manifest setup
+    - [x] App Icon generation
+    - [x] Mobile responsiveness check
+    - [x] Final verification & Walkthrough update
+- [x] Production Build (`dist` folder generated)
+- [x] Native App Bridge (Capacitor)
+    - [x] Install & Init Capacitor
+    - [x] Add Android platform
+    - [x] Add iOS platform
