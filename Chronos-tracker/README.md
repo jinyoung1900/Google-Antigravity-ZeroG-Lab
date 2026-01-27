@@ -36,11 +36,12 @@ Chronos Tracker is a sophisticated, glassmorphic productivity suite designed for
   <img src="docs/showcase/new-demo.webp" alt="Main Tracker Demo" width="100%" />
   <br />
   <div style="display: flex; gap: 10px; justify-content: center;">
-    <img src="docs/showcase/goals.png" alt="Goals Tab" width="48%" />
-    <img src="docs/showcase/heatmap.png" alt="Insights Heatmap" width="48%" />
+    <img src="docs/showcase/mobile.png" alt="Mobile Experience" width="33%" />
+    <img src="docs/showcase/goals.png" alt="Goals Tab" width="33%" />
+    <img src="docs/showcase/heatmap.png" alt="Insights Heatmap" width="33%" />
   </div>
   <br />
-  <img src="docs/showcase/mobile.png" alt="Mobile Experience" width="300px" />
+  
 </div>
 
 ---
@@ -91,5 +92,5 @@ The output will be in the `dist` folder, ready for deployment to Vercel, Netlify
 ---
 
 <div align="center">
-  <p>Built with ❤️ for precision and productivity.</p>
+  <p>Built with Google Antigravity by jinyoung1900.</p>
 </div>
