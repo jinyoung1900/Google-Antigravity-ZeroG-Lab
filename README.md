@@ -41,7 +41,6 @@ Chronos Tracker is a sophisticated, glassmorphic productivity suite designed for
   </div>
   <br />
   <img src="docs/showcase/mobile.png" alt="Mobile Experience" width="300px" />
-  <p><i>The secret mascot easter egg is hidden somewhere in the title! 🐶✨</i></p>
 </div>
 
 ---
