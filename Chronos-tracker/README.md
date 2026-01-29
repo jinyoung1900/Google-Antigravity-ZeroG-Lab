@@ -36,7 +36,7 @@ Fixed local storage error
 ## 🎨 Showcase
 
 <div align="center">
-  <img src="docs/showcase/Chronostracker1.2demo.gif" alt="Main Tracker Demo" width="100%" />
+  <img src="docs/showcase/Chronostracker1.2demo.gif" alt="Main Tracker Demo" width="50%" />
   <br />
   <div style="display: flex; gap: 10px; justify-content: center;">
     <img src="docs/showcase/mobile.png" alt="Mobile Experience" width="33%" />
