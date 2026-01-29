@@ -6,6 +6,9 @@ Chronos Tracker is a sophisticated, glassmorphic productivity suite designed for
 
 ---
 
+Ver.1.3 
+Fixed local storage error
+
 ## ✨ Key Features
 
 ### 🚀 Advanced Tracking
@@ -33,7 +36,7 @@ Chronos Tracker is a sophisticated, glassmorphic productivity suite designed for
 ## 🎨 Showcase
 
 <div align="center">
-  <img src="" alt="Main Tracker Demo" width="100%" />
+  <img src="docs/showcase/Chronostracker1.2demo.mp4" alt="Main Tracker Demo" width="100%" />
   <br />
   <div style="display: flex; gap: 10px; justify-content: center;">
     <img src="docs/showcase/mobile.png" alt="Mobile Experience" width="33%" />
