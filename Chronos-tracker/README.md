@@ -97,5 +97,5 @@ The output will be in the `dist` folder, ready for deployment to Vercel, Netlify
 ---
 
 <div align="center">
-  <p>Built with Google Antigravity by jinyoung1900.</p>
+  <p>Built with Google Antigravity and Anroid Studio by jinyoung1900.</p>
 </div>
