@@ -6,6 +6,8 @@ Chronos Tracker is a sophisticated, glassmorphic productivity suite designed for
 
 ---
 
+[***Download***](/Chronos-tracker/release)
+
 Ver.1.3 
 Fixed local storage error
 
