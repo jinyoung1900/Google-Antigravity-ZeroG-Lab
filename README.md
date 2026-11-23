@@ -1,10 +1,12 @@
-# 🛸 ZeroG-Lab
+# ?? ZeroG-Lab
 > **Managed via Google Antigravity**
 > *Per aspera ad astra*
 
-This is my personal development sandbox for building vibe code applications. 
-Currently focused on **Chronos Tracker** and other agent-led experiments.
+This is my personal development sandbox for building vibe code applications.
+Currently focused on **Doomscroller** and other agent-led experiments.
 
-## 🛰️ Current Missions
-- [**Chronos Tracker:**](/Chronos-tracker/README.md) Simple time tracking tool. First one I'm testing Antigravity with. Final aim is to upload it to anroid appstore 
+## ??? Current Missions
+- [**Doomscroller:**](/Doomscroller-app/README.md) Doom scrolling w/ maximum efficiency. A customisable grid where you can connect multiple apps to watch short form videos endlessly.
 
+## ?? Finished Missions
+- [**Chronos Tracker:**](/Chronos-tracker/README.md) Simple time tracking tool. First one I'm testing Antigravity with. Final aim is to upload it to Android appstore.
